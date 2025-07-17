@@ -32,13 +32,6 @@ robot.move_j_p(init_tcp_pose)
 click_point_pix = ()
 camera_color_img, camera_depth_img = camera.get_frames()
 
-def generate_pose():
-    print("[INFO] Loading model...")
-    torch.load("epoch_48_iou_0.93", map_location="cpu")
-
-    camera_color_img, camera_depth_img = camera.get_frames()
-    
-
 def pick_and_place(x, y):
     global camera, robot, click_point_pix, place_index
     click_point_pix = (x,y)

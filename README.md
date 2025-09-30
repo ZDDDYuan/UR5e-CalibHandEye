@@ -10,7 +10,7 @@
 
 * **Base**: Robot base coordinate system
 * **Gripper**: Robot end-effector coordinate system
-* **Targett**: Calibration target coordinate system
+* **Target**: Calibration target coordinate system
 * **Camera**: Camera coordinate system
 
 ## Eye-in-Hand Calibration

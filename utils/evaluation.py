@@ -5,8 +5,7 @@ from scipy.spatial.transform import Rotation as R
 import ace_tools_open as tools
 
 # Load calibration data
-# calib_data_dir = "calib_handeye_data/20250709_202641"
-calib_data_dir = "calib_handeye_data/20250709_231228"
+calib_data_dir = "calib_handeye_data/20250709_202641"
 T_g2b_all = np.load(f"{calib_data_dir}/gripper2base.npy")
 T_t2c_all = np.load(f"{calib_data_dir}/target2cam.npy")
 T_cam2gripper = np.loadtxt(f"{calib_data_dir}/camera2gripper.txt")

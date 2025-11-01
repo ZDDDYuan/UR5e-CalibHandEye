@@ -20,7 +20,7 @@ SAVE_DIR = osp.join("/home/zoom3d/project/UR-Robotics/calib_handeye_data", SUBFO
 os.makedirs(SAVE_DIR, exist_ok=True)
 
 camera = RealSenseD435iCamera()
-robot = UR5Robot(is_use_robotiq3f=False)
+robot = UR5Robot(is_use_robotiq3f=True)
 
 R_g2b, t_g2b = [], []
 R_t2c, t_t2c = [], []
@@ -93,8 +93,8 @@ def take_samples(init_tcp_pose: np.ndarray) -> None:
         elif idx == 0:
             calib_trans = init_tcp_pose[:3]
         calib_tcp_pose = np.append(calib_trans, calib_rot)
-        robot.move_j_p(calib_tcp_pose, k_acc=2.0, k_vel=2.0)
         print(f"[INFO] Ready to take sample {idx + 1}/{num_samples} — pose: {calib_tcp_pose.tolist()}")
+        robot.move_j_p(calib_tcp_pose, k_acc=2.0, k_vel=2.0)
 
         while True:
             img_rgb, _ = camera.get_frames()
@@ -123,15 +123,15 @@ def take_samples(init_tcp_pose: np.ndarray) -> None:
             if key == ord('s'):
                 print(f"[INFO] Sample {idx + 1} captured.")
 
-                # Get T_gripper2base
-                curr_tcp_pose = np.array(robot.get_current_tcp())
-                R_gripper2base, _ = cv2.Rodrigues(curr_tcp_pose[3:])
-                t_gripper2base = curr_tcp_pose[:3].reshape(3, 1)
-                R_g2b.append(R_gripper2base)
-                t_g2b.append(t_gripper2base)
-
-                # Get T_target2camera
                 if result is not None:
+                    # Get T_gripper2base
+                    curr_tcp_pose = np.array(robot.get_current_tcp())
+                    R_gripper2base, _ = cv2.Rodrigues(curr_tcp_pose[3:])
+                    t_gripper2base = curr_tcp_pose[:3].reshape(3, 1)
+                    R_g2b.append(R_gripper2base)
+                    t_g2b.append(t_gripper2base)
+
+                    # Get T_target2camera
                     rvec, tvec = result
                     R_target2camera, t_target2camera = rvec_tvec_transform(rvec, tvec)
                     R_t2c.append(R_target2camera)
@@ -185,6 +185,7 @@ def calibrate_eye_in_hand():
 def main():
     # Move to initial pose
     init_tcp_pose = np.array([0.15, -0.30, 0.18, 0.0, 0.0, 0.0])
+    robot.close_gripper()
     robot.move_j_p(init_tcp_pose, k_acc=2.0, k_vel=3.0)
     time.sleep(2)
     print("[INFO] UR5e Robot has reached initial pose...")

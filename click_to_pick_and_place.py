@@ -3,8 +3,6 @@ import numpy as np
 from threading import Thread
 from scipy.spatial.transform import Rotation as R
 
-import torch
-
 from utils.realsense_d435i import RealSenseD435iCamera
 from utils.ur5_robot import UR5Robot
     
@@ -63,7 +61,7 @@ def pick_and_place(x, y):
 
     curr_tcp_pose = robot.get_current_tcp()
     curr_tcp_position = curr_tcp_pose[:3]
-    curr_tcp_orientation = R.from_euler("xyz", curr_tcp_pose[3:], degrees=False).as_matrix()
+    curr_tcp_orientation, _ = cv2.Rodrigues(np.array(curr_tcp_pose[3:]))
     T_gripper2base = np.eye(4)
     T_gripper2base[:3, :3] = curr_tcp_orientation
     T_gripper2base[:3, 3] = curr_tcp_position
